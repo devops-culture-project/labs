@@ -14,6 +14,8 @@ This is your working directory for this lab (Labs/ci-cd-docker).
 ## GitHub
 Please create a GitHub account at: https://github.com/
 Fork this repository to your account.
+Please clone another repository ftom this project:  
+    `git clone https://github.com/devops-culture-project/nodejs-app-docker.git`
 
 ## Docker Hub
 Please create a docker hub account at: https://hub.docker.com/
@@ -25,6 +27,9 @@ Run this command:
 
 Ensure that the docker image created:  
     `docker image ls`  
+
+In your machine - please create the following directory:  
+    `mkdir /var/jenkins_home`
 
 Attached there is a docker-compose.yml file. It will set up your Jenkins server.  
 On your own:
