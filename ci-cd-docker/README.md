@@ -140,6 +140,10 @@ It will ask you to generate a token. Press on the link "create an access token h
 Create an access token and then copy the token back to jenkins.  
 Choose your user (It suppose to be the only user) and then the lab's repository, and "Create Pipeline".
 
+## Wrap-up
+1. From the working directory, stop the compose:  
+    `docker-compose down -v`
+1. Remove /var/jenkins_home from your machine.
 
 ## Biblography
 This Lab is based on this websites:  
