@@ -18,6 +18,8 @@ Please fork another repository from this project: "https://github.com/devops-cul
 
 ## Docker Hub
 Please create a docker hub account at: https://hub.docker.com/
+
+### Docker Hub Repository
 Create a docker repository named "nodejs-app-docker".
 NOTE: Don't touch the build settings. (Docker can create automated builds to your image by itself)
 
@@ -100,7 +102,19 @@ Now, you will see a screen like this:
 
 All Right, now we have jenkins installed and we are using blue ocean plugin to have a better experience in your pipelines.
 
-The next steps is create a pipeline to build some things for us.
+### Docker Hub Credential
+Go to jenkins home, click on "Manage Jenkins" and “Manage Credentials”, finaly, click "global".
+
+![Jenkins Credentials Settings](pictures/jenkins-cred.png)
+
+Click on “Add Credentials” in left menu, put your credential and save it.
+
+![Add Credentials](pictures/jenkins-create-credentials.png)
+
+* IMPORTANT: If you didn't called your credential 'dockerhub' you should change it also in the Jenkinsfile.
+
+Great!  
+The next step is to create a pipeline to build some things for us.
 
 ## Jenkinsfile
 Attached is a Jenkinsfile for this lab, please read the explanation inside this file.  
@@ -118,9 +132,18 @@ Click "Create pipeline"
 ![Choose GitHub](pictures/create-pipeline.png)
 
 ## Building the first docker image 
+After saving this pipeline, Jenkins will start running it's first run.
+It suppose to succeed:
 
+![Run Succeeded](pictures/jenkins-succeed-run.png)
 
-## Wrap-up
+You can go to your docker hub repository and look at the image pushed:
+
+![Image Pushed](pictures/image-pushed.png)
+
+You can re-run this pipeline and look at the version of the image changed from build to build.
+
+### Clean your lab
 1. From the working directory, stop the compose:  
     `docker-compose down -v`
 1. Remove /var/jenkins_home from your machine.
