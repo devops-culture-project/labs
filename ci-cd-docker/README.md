@@ -14,8 +14,7 @@ This is your working directory for this lab (Labs/ci-cd-docker).
 ## GitHub
 Please create a GitHub account at: https://github.com/
 Fork this repository to your account.
-Please clone another repository ftom this project:  
-    `git clone https://github.com/devops-culture-project/nodejs-app-docker.git`
+Please fork another repository from this project: "https://github.com/devops-culture-project/nodejs-app-docker"
 
 ## Docker Hub
 Please create a docker hub account at: https://hub.docker.com/
@@ -29,7 +28,8 @@ Ensure that the docker image created:
     `docker image ls`  
 
 In your machine - please create the following directory:  
-    `mkdir /var/jenkins_home`
+    `mkdir /tmp/jenkins_home`  
+IMPORTANT: This is your jenkins data so if you preffer to save it somewhere else please edit the docker-compose too.
 
 Attached there is a docker-compose.yml file. It will set up your Jenkins server.  
 On your own:
@@ -118,27 +118,14 @@ Click "Create pipeline"
 
 ![Choose GitHub](pictures/create-pipeline.png)
 
-In the next view we\ll build the pipeline
-
-![Pipeline Creation](pipeline-workflow-creation.png)
-
-Click on '+' and call this job "build nodejs-app image"
-Add a step from kind "Run arbitrary Pipeline script"
-
-Copy the Jenkinsfile code to the job window:
-
-![Pipeline Inside a job](pictures/add-pipeline-code.png)
-
-Save the job and commit to master.
-
 ## Testing docker command in the job
-Click on “Build Now” in job’s menu:
+Notice that Jenkins started an execution of hte pipeline.  
+DONT PANIC  
+It will fail.
 
-![Choose Build Now](pictures/jenkins-menu-build-now.png)
+![Failed Pipeline](pictures/failed-pipeline.png)
 
-It will ask you to generate a token. Press on the link "create an access token here".  
-Create an access token and then copy the token back to jenkins.  
-Choose your user (It suppose to be the only user) and then the lab's repository, and "Create Pipeline".
+
 
 ## Wrap-up
 1. From the working directory, stop the compose:  
