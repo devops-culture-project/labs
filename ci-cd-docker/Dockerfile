@@ -14,5 +14,6 @@ curl -fsSL https://download.docker.com/linux/$(. /etc/os-release; echo "$ID")/gp
 	apt-get update && \
 	apt-get -y install docker-ce
 RUN apt-get install -y docker-ce
-RUN usermod -a -G docker jenkins
-USER jenkins
+#RUN usermod -a -G docker jenkins
+#USER jenkins
+#RUN newgrp docker

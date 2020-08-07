@@ -2,9 +2,11 @@ version: '3.7'
 services:
   jenkins:
     image: devops-culture/jenkins-docker:1
+    privileged: true
     container_name: jenkins-docker
     ports:
       - 8081:8080
+      - 50000:50000
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /tmp/jenkins_home:/var/jenkins_home

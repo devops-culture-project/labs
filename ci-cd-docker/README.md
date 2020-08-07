@@ -18,6 +18,8 @@ Please fork another repository from this project: "https://github.com/devops-cul
 
 ## Docker Hub
 Please create a docker hub account at: https://hub.docker.com/
+Create a docker repository named "nodejs-app-docker".
+NOTE: Don't touch the build settings. (Docker can create automated builds to your image by itself)
 
 ## Jenkins
 Attached there is a Dockerfile. It will be your jenkins (also docker installed inside)
@@ -101,11 +103,8 @@ All Right, now we have jenkins installed and we are using blue ocean plugin to h
 The next steps is create a pipeline to build some things for us.
 
 ## Jenkinsfile
-Attached is a Jenkinsfile for this lab.
-
-### Explenation
-In this pipeline, We have 2 environment variables to change the registry and the credential easily.
-The job will have one step.Docker build command will be run by utilizing the jenkins build number in the docker tag.
+Attached is a Jenkinsfile for this lab, please read the explanation inside this file.  
+IMPORTANT: For this to work, in the Jenkinsfile, please replace the docker_hub_account with your account.
 
 ## Creating a job to test docker command
 Click on "Create new pipeline"
@@ -118,13 +117,7 @@ Click "Create pipeline"
 
 ![Choose GitHub](pictures/create-pipeline.png)
 
-## Testing docker command in the job
-Notice that Jenkins started an execution of hte pipeline.  
-DONT PANIC  
-It will fail.
-
-![Failed Pipeline](pictures/failed-pipeline.png)
-
+## Building the first docker image 
 
 
 ## Wrap-up
