@@ -146,7 +146,8 @@ You can re-run this pipeline and look at the version of the image changed from b
 ### Clean your lab
 1. From the working directory, stop the compose:  
     `docker-compose down -v`
-1. In case you don't want to save your jenkins data, remove /tmp/jenkins_home from your machine.
+1. In case you don't want to save your jenkins data, remove /tmp/jenkins_home from your machine:  
+    `rm -rf /tmp/jenkins_home`
 
 ## Biblography
 This Lab is based on these tutorials:  
