@@ -12,15 +12,15 @@ Please install theese softwares on your machine/workstation:
 This is your working directory for this lab (Labs/ci-cd-docker).
 
 ## GitHub
-Please create a GitHub account at: https://github.com/
-Fork this repository to your account.
+Please create a GitHub account at: https://github.com/  
+Fork this repository to your account.  
 Please fork another repository from this project: "https://github.com/devops-culture-project/nodejs-app-docker"
 
 ## Docker Hub
 Please create a docker hub account at: https://hub.docker.com/
 
 ### Docker Hub Repository
-Create a docker repository named "nodejs-app-docker".
+Create a docker repository named "nodejs-app-docker".  
 NOTE: Don't touch the build settings. (Docker can create automated builds to your image by itself)
 
 ## Jenkins
@@ -33,7 +33,7 @@ Ensure that the docker image created:
 
 In your machine - please create the following directory:  
     `mkdir /tmp/jenkins_home`  
-IMPORTANT: This is your jenkins data so if you preffer to save it somewhere else please edit the docker-compose too.
+* IMPORTANT: This is your jenkins data so if you preffer to save it somewhere else please edit the docker-compose too.
 
 Attached there is a docker-compose.yml file. It will set up your Jenkins server.  
 On your own:
@@ -86,12 +86,12 @@ Search for locale. Input “en” in “Default language” and check “ignore 
 
 ![Choose Locale Language](pictures/locale-lang.png)
 
-Locale Plugin installed and configured, lets install Blue ocean.
+Locale Plugin installed and configured, lets install Blue ocean.  
 Back to jenkins home > Manage jenkins >Manage Plugins. In Available tab search for blueocean and install it.
 
 ![Blue Ocean Installation](pictures/blueocean-install.png)
 
-All done. But you see the visual without blue ocean plugin, let’s use it.
+All done. But you see the visual without blue ocean plugin, let’s use it.  
 In Jenkins home, Click in “Open Blue Ocean” (left menu):
 
 ![Choose Blue Ocean](pictures/jenkins-menu-blueocean.png)
@@ -118,7 +118,7 @@ The next step is to create a pipeline to build some things for us.
 
 ## Jenkinsfile
 Attached is a Jenkinsfile for this lab, please read the explanation inside this file.  
-IMPORTANT: For this to work, in the Jenkinsfile, please replace the docker_hub_account with your account.
+* IMPORTANT: For this to work, in the Jenkinsfile, please replace the docker_hub_account with your account.
 
 ## Creating a job to test docker command
 Click on "Create new pipeline"
@@ -146,9 +146,9 @@ You can re-run this pipeline and look at the version of the image changed from b
 ### Clean your lab
 1. From the working directory, stop the compose:  
     `docker-compose down -v`
-1. Remove /var/jenkins_home from your machine.
+1. In case you don't want to save your jenkins data, remove /tmp/jenkins_home from your machine.
 
 ## Biblography
-This Lab is based on this websites:  
+This Lab is based on these tutorials:  
 * https://medium.com/@gustavo.guss/quick-tutorial-of-jenkins-b99d5f5889f2
 * https://medium.com/@gustavo.guss/jenkins-building-docker-image-and-sending-to-registry-64b84ea45ee9
