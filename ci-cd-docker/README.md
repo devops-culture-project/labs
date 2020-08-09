@@ -3,7 +3,7 @@ In this lab we will create an entire environment of developement.
 We will create a basic ci/cd for docker that will build the image and push it to your docker hub account.
 
 ## Requirements
-This lab assumes that you are running on a linux machine (MACOS is also good).
+This lab assumes that you are running on a linux machine.
 Please install theese softwares on your machine/workstation:
 * docker 
 * docker-compose
@@ -121,12 +121,13 @@ Attached is a Jenkinsfile for this lab, please read the explanation inside this 
 * IMPORTANT: For this to work, in the Jenkinsfile, please replace the docker_hub_account with your account.
 
 ## Creating a job to test docker command
+Go back to the blue ocean view.
 Click on "Create new pipeline"
 Fill the form:
 * Choose GitHub
 * Give an access token which you can create via the "create access token" link
 * Choose user user
-* Choose the devops culture repository
+* Choose the nodejs-app-docker repository
 Click "Create pipeline"
 
 ![Choose GitHub](pictures/create-pipeline.png)
