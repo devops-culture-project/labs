@@ -142,7 +142,10 @@ You can go to your docker hub repository and look at the image pushed:
 
 ![Image Pushed](pictures/image-pushed.png)
 
-You can re-run this pipeline and look at the version of the image changed from build to build.
+Now pull the image from your docker repository:  
+    `docker pull docker_account/nodejs-app-docker:1`  
+Run the docker app:  
+    `docker run -p 3000:3000 docker_account/nodejs-app-docker:1 nodejs-app`
 
 ### Clean your lab
 1. From the working directory, stop the compose:  
