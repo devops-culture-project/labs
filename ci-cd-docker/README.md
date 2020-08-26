@@ -148,10 +148,7 @@ Run the docker app:
     `docker run -p 3000:3000 docker_account/nodejs-app-docker:1 nodejs-app`
 
 ## Add DNS to Jenkins
-Go to: https://www.noip.com and sign up.
-
-![no-ip home](pictures/noip-home.png)
-
+Go to: https://www.noip.com and sign up.  
 Go to your user settings and make sure you have a username:
 
 ![no-ip settings](pictures/noip-settings.png)
@@ -168,7 +165,7 @@ Edit the config file `ddclient.conf` with user noip username and password.
 
 Now all we need to do is:
 
-`docker-compose down`
+`docker-compose down`  
 `docker-compose -f docker-compose-2.yml up -d`
 
 ![Jenkins with DNS](pictures/jenkins-with-dns.png)
@@ -187,13 +184,13 @@ Here, Payload URL is the URL where our Jenkins is running add github-webhook to 
 We will leave the following checkbox under "just push events".  
 Click "Add Webhook" !
 
-
-
 ### Clean your lab
 1. From the working directory, stop the compose:  
     `docker-compose down -v`
 1. In case you don't want to save your jenkins data, remove /tmp/jenkins_home from your machine:  
-    `rm -rf /tmp/jenkins_home`
+    `rm -rf /tmp/jenkins_home`  
+1. Clear ddclient config:
+    `rm -rf /tmp/ddclient-config`
 
 ## Biblography
 This Lab is based on these tutorials:  
