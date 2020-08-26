@@ -147,6 +147,48 @@ Now pull the image from your docker repository:
 Run the docker app:  
     `docker run -p 3000:3000 docker_account/nodejs-app-docker:1 nodejs-app`
 
+## Add DNS to Jenkins
+Go to: https://www.noip.com and sign up.
+
+![no-ip home](pictures/noip-home.png)
+
+Go to your user settings and make sure you have a username:
+
+![no-ip settings](pictures/noip-settings.png)
+
+In the right side, under "My Services" go to "managed DNS" and click add hostname.
+Create your own DNS:
+
+![Create DNS](pictures/create-hostname.png)
+
+Don't worry about the ip address, it's not nessecary.
+Look at the working directory at `docker-compose-2.yml`
+It's the same jenkins but ddclient container is added.
+Edit the config file `ddclient.conf` with user noip username and password.
+
+Now all we need to do is:
+
+`docker-compose down`
+`docker-compose -f docker-compose-2.yml up -d`
+
+![Jenkins with DNS](pictures/jenkins-with-dns.png)
+
+Try to reach your jenkins. If it doesn't work, look at the IP in no ip and check it is actually your ip.  
+If not, change it to your IP.
+
+## Webhook from jenkins to github
+Go to your nodejs repository:  
+1. Go to "settings"
+1. Click "webhooks"
+1. Click "add webhook"
+1. Write the Payload URL as: "http://{{YOUR JENKINS HOSTNAME}}.ddns.net:8081/github-webhook/"
+
+Here, Payload URL is the URL where our Jenkins is running add github-webhook to tell GitHub that it is a webhook.  
+We will leave the following checkbox under "just push events".  
+Click "Add Webhook" !
+
+
+
 ### Clean your lab
 1. From the working directory, stop the compose:  
     `docker-compose down -v`
