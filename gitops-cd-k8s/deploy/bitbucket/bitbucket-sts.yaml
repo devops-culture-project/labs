@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: bitbucket
+  labels:
+    app.kubernetes.io/name: bitbucket
+    app.kubernetes.io/version: "1.0.0"
+    app.kubernetes.io/component: server
+    app.kubernetes.io/part-of: bitbucket
+    app.kubernetes.io/managed-by: argocd
+spec:
+  serviceName: bitbucket-svc
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bitbucket
+  template:
+    metadata:
+      labels:
+        app: bitbucket
+    spec:
+      containers:
+      - name: bitbucket
+        image: atlassian/bitbucket-server:7.7.0
+        ports:
+        - containerPort: 7990
+          name: bitbucket-http
+        volumeMounts:
+        - name: bitbucket-data
+          mountPath: /var/atlassian/application-data/bitbucket
+  volumeClaimTemplates:
+  - metadata:
+      name: bitbucket-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 10Gi

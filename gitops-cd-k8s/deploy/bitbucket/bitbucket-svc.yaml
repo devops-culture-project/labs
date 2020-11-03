@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: bitbucket-svc
+  labels:
+    app.kubernetes.io/name: bitbucket
+    app.kubernetes.io/version: "1.0.0"
+    app.kubernetes.io/managed-by: argocd
+    app.kubernetes.io/component: server
+    app.kubernetes.io/part-of: bitbucket
+spec:
+  selector:
+    app: bitbucket
+  ports:
+  - name: bitbucket-http
+    port: 7990
+    targetPort: bitbucket-http
+  type: NodePort
