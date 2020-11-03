@@ -23,7 +23,7 @@ With that command, you deployed a bitbucket instance to your environment:
 Run: `kubectl get svc bitbucket-svc -o json | jq .spec.ports[0].nodePort`  
 This will show you your port for outside-cluster communication!  
 > kubectl get svc bitbucket-svc -o json | jq .spec.ports[0].nodePort
-> 31775  
+> 30001   
 If you are Running on cloud, you want to know a cluster node IP.
 Run: `kubectl get nodes -o json | jq .items[0].status.addresses[1]`
 > kubectl get nodes -o json | jq .items[0].status.addresses[1]  
@@ -31,11 +31,14 @@ Run: `kubectl get nodes -o json | jq .items[0].status.addresses[1]`
 >   "address": "35.223.134.3",
 >   "type": "ExternalIP"
 >}  
-Make sure it's type is ExternalIP
+Make sure it's type is ExternalIP.  
+Also and very important, the cloud is by default have no ports open in it's firewall, so we have to open our services port.  
+For GCP run: `gcloud compute firewall-rules create bitbucket-web-port --allow tcp:<YourNodePort>`
+> gcloud compute firewall-rules create bitbucket-web-port --allow tcp:30001
 
 Go on your browser to: http://localhost:<YourNodePort>/setup (or for cloud: http://<ClusterNodeIP:<YourNodePort>/setup)  
 You can also test your api respose:  
-> curl -X GET "http://localhost:31775/setup"  
+> curl -X GET "http://localhost:30001/setup"  
 You should see the bitbucket's setup page.  Do the quick setup with the internal DB and no jira integration.  
 It shoukd ask you for a license, you can generate it easily (just choose server license when you'll need to).  
 Log in to bitbucket and that should be enough for it.
@@ -47,140 +50,55 @@ Run on your local machine: `wget -O deploy/argocd/install-argocd.yaml https://ra
 * warning: You should NEVER run a yaml from the web right into your system (It can be a virus...), so first download it and see what's inside.  
 Create a namespace for argocd to run in: `kubectl create namespace argocd`
 Run on your local machine: `kubectl apply -n argocd -f deploy/argocd/install-argocd.yaml`  
-By default, the Argo CD API server is not exposed with an external IP. To access the API server, we'll use Port forwarding.  
-Run: `kubectl port-forward svc/argocd-server -n argocd 8080:443`
+By default, the Argo CD API server is not exposed with an external IP. To access the API server:  
+If you running locally we'll use Port forwarding.  
+Run: `kubectl port-forward svc/argocd-server -n argocd 8080:443`  
+If you running on cloud patch the svc to become a LoadBalancer:  
+Run: `kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'`  
+and look for the externalIP with the command: `kubectl get svc -n argocd`  
+> kubectl get svc -n argocd
+> ...
+> argocd-server           LoadBalancer   <InternalIP>    <ExternalIP>   80:31253/TCP,443:30053/TCP   5m55s  
 
+You can now go to: "http://localhost/" or "http://<LoadBalancerIP>/" and see the ArgoCD UI.
 
-## Docker Hub
-Please create a docker hub account at: https://hub.docker.com/
+![ArgoCD Login](pictures/argocd-login.png)
 
-### Docker Hub Repository
-Create a docker repository named "nodejs-app-docker".  
-NOTE: Don't touch the build settings. (Docker can create automated builds to your image by itself)
+To get the password of the admin user, run: `kubectl get pods -n argocd -l app.kubernetes.io/name=argocd-server -o name | cut -d'/' -f 2`  
+> kubectl get pods -n argocd -l app.kubernetes.io/name=argocd-server -o name | cut -d'/' -f 2
+> argocd-server-bdcdd6f7c-l8hw4  
+Go to the UI and enter username and password.
 
-## Jenkins
-Attached there is a Dockerfile. It will be your jenkins (also docker installed inside)
-Run this command:  
-    `docker build . -t devops-culture/jenkins-docker:1`  
+![ArgoCD Home](pictures/argocd-empty-home.png)
 
-Ensure that the docker image created:  
-    `docker image ls`  
+Great ! we finished setting up our environment!  
+We we'll now use our environment to do a CD to our kubernetes cluster with an app and our ArgoCD.  
+Please clone this repository: `git clone https://github.com/devops-culture-project/nexus-uploader-dashboard-example.git`  
 
-In your machine - please create the following directory:  
-    `mkdir /tmp/jenkins_home`  
-* IMPORTANT: This is your jenkins data so if you preffer to save it somewhere else please edit the docker-compose too.
+In Bitbucket, Create a project with your name and a repository called "package-uploader-ui":
 
-Attached there is a docker-compose.yml file. It will set up your Jenkins server.  
-On your own:
-* Look at the compose file and see whats inside.
-* Find the address that jenkins will listen to.  
+![Creating a Repository](pictures/create-bitbucket-repo.png)
 
-run in the working directory:  
-    `docker-compose up -d`  
-View the generated administrator password to log in the first time:  
-    `docker exec jenkins-docker cat /var/jenkins_home/secrets/initialAdminPassword`  
-Enter jenkins and log in.
+Clone the repository to your environment (Not inside labs directory!)
+> git clone http://<bitbucket>/scm/it/package-uploader-ui.git
+> warning: You appear to have cloned an empty repository.
 
-![Jenkins First Login](pictures/jenkins-first-login.png)
+Go to the first clone we made from github and delete the '.git' hidden directory:
+`rm -rf nexus-uploader-dashboard-example/.git`  
+After deletion is complete, copy the files into our new bitbucket clone:  
+`cp -r nexus-uploader-dashboard-example/* package-uploader-ui/`  
+And then push the code into bitbucket (Do it yourself). Bitbucket may ask you to config user.email and user.name - do it.
 
-Enter the password and continue.  
-In next screen, click “Install suggested plugins” and wait for them to install.  
-In the next section you need to create a user for yourself.
+![](pictures/bitbucket-repo-with-code.png)
 
-![Jenkins first user admin](pictures/create-first-user-admin.png)
+The next thing we'll do is to add our project to ArgoCD. Go the argo and push on the button "+ NEW APP".  
+Give your app the name, under project fill 'default' and leave sync policy in manual mode.
 
-Click "get start using Jenkins"  
-Now we need to install two plugins:
-* blueocean plugin to beautify your jenkins. This plugin better the usability of jenkins and focus in pipelines scripts.
-* locale plugin to jenkins always show english text. You don’t need install this, but i suggest install to search errors directly in english.
+![](pictures/create-argo-app-part1.png)
 
-Go to Plugin Manager again and search for locale.
+Under source, fill the rbitbucket repo url, keep HEAD as the revision and unde path put '/'.
 
-To install plugins:
-- In home of jenkins, click in Manage Jenkins:
-
-![Jenkins Menu](pictures/jenkins-menu.png)
-
-- Click manage plugins:
-
-![Jenkins Menu Manage Plugins](pictures/jenkins-manage-plugins.png)
-
-In Plugin manager, you need click in Available tab and after load the tab, search the plugins:
-
-![Jenkins Plugin Manager](pictures/plugin-manager.png)
-
-Search for locale, mark the checkbox and click in install button:
-
-![Locale Installation](pictures/locale-install.png)
-
-After install locale, go to Home > Manage Jenkins > Configure System.
-
-![Configure System](pictures/jenkins-configure-system.png)
-
-Search for locale. Input “en” in “Default language” and check “ignore browser preference and force this language to all users”:
-
-![Choose Locale Language](pictures/locale-lang.png)
-
-Locale Plugin installed and configured, lets install Blue ocean.  
-Back to jenkins home > Manage jenkins >Manage Plugins. In Available tab search for blueocean and install it.
-
-![Blue Ocean Installation](pictures/blueocean-install.png)
-
-All done. But you see the visual without blue ocean plugin, let’s use it.  
-In Jenkins home, Click in “Open Blue Ocean” (left menu):
-
-![Choose Blue Ocean](pictures/jenkins-menu-blueocean.png)
-
-Now, you will see a screen like this:
-
-![Blue Ocean View](pictures/blue-ocean-jenkins-view.png)
-
-All Right, now we have jenkins installed and we are using blue ocean plugin to have a better experience in your pipelines.
-
-### Docker Hub Credential
-Go to jenkins home, click on "Manage Jenkins" and “Manage Credentials”, finaly, click "global".
-
-![Jenkins Credentials Settings](pictures/jenkins-cred.png)
-
-Click on “Add Credentials” in left menu, put your credential and save it.
-
-![Add Credentials](pictures/jenkins-create-credentials.png)
-
-* IMPORTANT: If you didn't called your credential 'dockerhub' you should change it also in the Jenkinsfile.
-
-Great!  
-The next step is to create a pipeline to build some things for us.
-
-## Jenkinsfile
-Attached is a Jenkinsfile for this lab, please read the explanation inside this file.  
-* IMPORTANT: For this to work, in the Jenkinsfile, please replace the docker_hub_account with your account.
-
-## Creating a job to test docker command
-Go back to the blue ocean view.
-Click on "Create new pipeline"
-Fill the form:
-* Choose GitHub
-* Give an access token which you can create via the "create access token" link
-* Choose user user
-* Choose the nodejs-app-docker repository
-Click "Create pipeline"
-
-![Choose GitHub](pictures/create-pipeline.png)
-
-## Building the first docker image 
-After saving this pipeline, Jenkins will start running it's first run.
-It suppose to succeed:
-
-![Run Succeeded](pictures/jenkins-succeed-run.png)
-
-You can go to your docker hub repository and look at the image pushed:
-
-![Image Pushed](pictures/image-pushed.png)
-
-Now pull the image from your docker repository:  
-    `docker pull docker_account/nodejs-app-docker:1`  
-Run the docker app:  
-    `docker run -p 3000:3000 docker_account/nodejs-app-docker:1 nodejs-app`
+# TODO NOW: Add a deploy dir to the nexus uploader and write a deployment for the app. put it in bitbucket and the finish the argo setup.
 
 ### Clean your lab
 1. From the working directory, stop the compose:  
