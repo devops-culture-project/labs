@@ -23,9 +23,17 @@ With that command, you deployed a bitbucket instance to your environment:
 Run: `kubectl get svc bitbucket-svc -o json | jq .spec.ports[0].nodePort`  
 This will show you your port for outside-cluster communication!  
 > kubectl get svc bitbucket-svc -o json | jq .spec.ports[0].nodePort
-> 31775
+> 31775  
+If you are Running on cloud, you want to know a cluster node IP.
+Run: `kubectl get nodes -o json | jq .items[0].status.addresses[1]`
+> kubectl get nodes -o json | jq .items[0].status.addresses[1]  
+> {
+>   "address": "35.223.134.3",
+>   "type": "ExternalIP"
+>}  
+Make sure it's type is ExternalIP
 
-Go on your browser to: http://localhost:<YourNodePort>/setup  
+Go on your browser to: http://localhost:<YourNodePort>/setup (or for cloud: http://<ClusterNodeIP:<YourNodePort>/setup)  
 You can also test your api respose:  
 > curl -X GET "http://localhost:31775/setup"  
 You should see the bitbucket's setup page.  Do the quick setup with the internal DB and no jira integration.  
