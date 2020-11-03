@@ -23,14 +23,16 @@ With that command, you deployed a bitbucket instance to your environment:
 Run: `kubectl get svc bitbucket-svc -o json | jq .spec.ports[0].nodePort`  
 This will show you your port for outside-cluster communication!  
 > kubectl get svc bitbucket-svc -o json | jq .spec.ports[0].nodePort
-> 30001   
+> 30001 
+
 If you are Running on cloud, you want to know a cluster node IP.
 Run: `kubectl get nodes -o json | jq .items[0].status.addresses[1]`
 > kubectl get nodes -o json | jq .items[0].status.addresses[1]  
 > {
 >   "address": "35.223.134.3",
 >   "type": "ExternalIP"
->}  
+>}
+
 Make sure it's type is ExternalIP.  
 Also and very important, the cloud is by default have no ports open in it's firewall, so we have to open our services port.  
 For GCP run: `gcloud compute firewall-rules create bitbucket-web-port --allow tcp:<YourNodePort>`
@@ -68,7 +70,8 @@ You can now go to: "http://localhost/" or "http://<LoadBalancerIP>/" and see the
 To get the password of the admin user, run: 
 `kubectl get pods -n argocd -l app.kubernetes.io/name=argocd-server -o name | cut -d'/' -f 2`  
 > kubectl get pods -n argocd -l app.kubernetes.io/name=argocd-server -o name | cut -d'/' -f 2
-> argocd-server-bdcdd6f7c-l8hw4  
+> argocd-server-bdcdd6f7c-l8hw4
+
 Go to the UI and enter username and password.
 
 ![ArgoCD Home](pictures/argocd-empty-home.png)
@@ -112,5 +115,4 @@ Under source, fill the rbitbucket repo url, keep HEAD as the revision and unde p
 
 ## Biblography
 This Lab is based on these tutorials:  
-* https://medium.com/@gustavo.guss/quick-tutorial-of-jenkins-b99d5f5889f2
-* https://medium.com/@gustavo.guss/jenkins-building-docker-image-and-sending-to-registry-64b84ea45ee9
+* https://argoproj.github.io/argo-cd/getting_started/
