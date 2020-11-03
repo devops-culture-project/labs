@@ -40,7 +40,8 @@ For GCP run: `gcloud compute firewall-rules create bitbucket-web-port --allow tc
 
 Go on your browser to: http://localhost:<YourNodePort>/setup (or for cloud: http://<ClusterNodeIP:<YourNodePort>/setup)  
 You can also test your api respose:  
-> curl -X GET "http://localhost:30001/setup"  
+> curl -X GET "http://localhost:30001/setup"
+
 You should see the bitbucket's setup page.  Do the quick setup with the internal DB and no jira integration.  
 It shoukd ask you for a license, you can generate it easily (just choose server license when you'll need to).  
 Log in to bitbucket and that should be enough for it.
