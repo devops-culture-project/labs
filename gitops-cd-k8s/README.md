@@ -65,7 +65,8 @@ You can now go to: "http://localhost/" or "http://<LoadBalancerIP>/" and see the
 
 ![ArgoCD Login](pictures/argocd-login.png)
 
-To get the password of the admin user, run: `kubectl get pods -n argocd -l app.kubernetes.io/name=argocd-server -o name | cut -d'/' -f 2`  
+To get the password of the admin user, run: 
+`kubectl get pods -n argocd -l app.kubernetes.io/name=argocd-server -o name | cut -d'/' -f 2`  
 > kubectl get pods -n argocd -l app.kubernetes.io/name=argocd-server -o name | cut -d'/' -f 2
 > argocd-server-bdcdd6f7c-l8hw4  
 Go to the UI and enter username and password.
@@ -84,7 +85,7 @@ Clone the repository to your environment (Not inside labs directory!)
 > git clone http://<bitbucket>/scm/it/package-uploader-ui.git
 > warning: You appear to have cloned an empty repository.
 
-Go to the first clone we made from github and delete the '.git' hidden directory:
+Go to the first clone we made from github and delete the '.git' hidden directory:  
 `rm -rf nexus-uploader-dashboard-example/.git`  
 After deletion is complete, copy the files into our new bitbucket clone:  
 `cp -r nexus-uploader-dashboard-example/* package-uploader-ui/`  
