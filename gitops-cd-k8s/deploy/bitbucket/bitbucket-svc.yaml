@@ -14,5 +14,6 @@ spec:
   ports:
   - name: bitbucket-http
     port: 7990
-    targetPort: 17990
+    targetPort: bitbucket-http
+    nodePort: 13000
   type: NodePort
