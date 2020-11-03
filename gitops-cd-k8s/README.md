@@ -48,6 +48,7 @@ Go to: https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/insta
 You should see a manifest of the argocd installation.  
 Run on your local machine: `wget -O deploy/argocd/install-argocd.yaml https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml`
 * warning: You should NEVER run a yaml from the web right into your system (It can be a virus...), so first download it and see what's inside.  
+
 Create a namespace for argocd to run in: `kubectl create namespace argocd`
 Run on your local machine: `kubectl apply -n argocd -f deploy/argocd/install-argocd.yaml`  
 By default, the Argo CD API server is not exposed with an external IP. To access the API server:  
