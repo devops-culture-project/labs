@@ -97,6 +97,15 @@ And then push the code into bitbucket (Do it yourself). Bitbucket may ask you to
 
 ![](pictures/bitbucket-repo-with-code.png)
 
+We can see that the repository has a deploy folder. Look inside and see how the application deploys itself to k8s.  
+Look at the spec of the deployment yaml, you'll see there the image of our application.  
+> spec:
+>   containers: 
+>     - image: DOCKERHUBUSER/artup-ui
+>       name: DOCKERHUBUSER/artup-ui
+
+<<<BUILD APP DOCKER !!! TODO>>>
+
 The next thing we'll do is to add our project to ArgoCD. Go the argo and push on the button "+ NEW APP".  
 Give your app the name, under project fill 'default' and leave sync policy in manual mode.
 
