@@ -49,7 +49,8 @@ Log in to bitbucket and that should be enough for it.
 ## ArgoCD
 Go to: https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml  
 You should see a manifest of the argocd installation.  
-Run on your local machine: `wget -O deploy/argocd/install-argocd.yaml https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml`
+Run on your local machine:  
+`wget -O deploy/argocd/install-argocd.yaml https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml`
 * warning: You should NEVER run a yaml from the web right into your system (It can be a virus...), so first download it and see what's inside.  
 
 Create a namespace for argocd to run in: `kubectl create namespace argocd`
@@ -62,13 +63,13 @@ Run: `kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalan
 and look for the externalIP with the command: `kubectl get svc -n argocd`  
 > kubectl get svc -n argocd  
 > ...  
-> argocd-server           LoadBalancer   <InternalIP>    <ExternalIP>   80:31253/TCP,443:30053/TCP   5m55s  
+> argocd-server           LoadBalancer   <InternalIP>    <ExternalIP>   80:31253/TCP,443:30053/TCP 
 
 You can now go to: "http://localhost/" or "http://<LoadBalancerIP>/" and see the ArgoCD UI.
 
 ![ArgoCD Login](pictures/argocd-login.png)
 
-To get the password of the admin user, run: 
+To get the password of the admin user, run:  
 `kubectl get pods -n argocd -l app.kubernetes.io/name=argocd-server -o name | cut -d'/' -f 2`  
 > kubectl get pods -n argocd -l app.kubernetes.io/name=argocd-server -o name | cut -d'/' -f 2  
 > argocd-server-bdcdd6f7c-l8hw4  
@@ -79,7 +80,8 @@ Go to the UI and enter username and password.
 
 Great ! we finished setting up our environment!  
 We we'll now use our environment to do a CD to our kubernetes cluster with an app and our ArgoCD.  
-Please clone this repository: `git clone https://github.com/devops-culture-project/nexus-uploader-dashboard-example.git`  
+Please clone this repository:  
+`git clone https://github.com/devops-culture-project/nexus-uploader-dashboard-example.git`  
 
 In Bitbucket, Create a project with your name and a repository called "package-uploader-ui":
 
