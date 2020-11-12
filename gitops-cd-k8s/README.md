@@ -101,19 +101,29 @@ We can see that the repository has a deploy folder. Look inside and see how the 
 Look at the spec of the deployment yaml, you'll see there the image of our application.  
 > spec:
 >   containers: 
->     - image: DOCKERHUBUSER/artup-ui
->       name: DOCKERHUBUSER/artup-ui
+>     - image: DOCKERHUBUSER/pkgup-ui:1
+>       name: pkgup-ui
 
-<<<BUILD APP DOCKER !!! TODO>>>
+What about to app's docker image ? well... we'll have to build it:  
+`docker build . -t DOCKERHUBUSER/pkgup-ui:1`  
+And then push it to your docker hub repo:  
+`docker push DOCKERHUBUSER/pkgup-ui:1`  
+Check you have that image in your docker hub.
 
 The next thing we'll do is to add our project to ArgoCD. Go the argo and push on the button "+ NEW APP".  
 Give your app the name, under project fill 'default' and leave sync policy in manual mode.
 
 ![](pictures/create-argo-app-part1.png)
 
-Under source, fill the rbitbucket repo url, keep HEAD as the revision and unde path put '/'.
+Under source, fill the bitbucket repo url, keep HEAD as the revision and unde path put '/'.  
+Under Cluster URL fill: https://kubernetes.default.svc  
+Under Namespace choose the default.  
 
-# TODO NOW: Add a deploy dir to the nexus uploader and write a deployment for the app. put it in bitbucket and the finish the argo setup.
+![](pictures/create-argo-app-part2.png)
+
+Click "+CREATE"  
+
+<< TODO: Create is not working >>
 
 ### Clean your lab
 1. From the working directory, stop the compose:  
