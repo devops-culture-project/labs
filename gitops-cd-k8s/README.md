@@ -22,16 +22,16 @@ With that command, you deployed a bitbucket instance to your environment:
 
 Run: `kubectl get svc bitbucket-svc -o json | jq .spec.ports[0].nodePort`  
 This will show you your port for outside-cluster communication!  
-> kubectl get svc bitbucket-svc -o json | jq .spec.ports[0].nodePort
-> 30001 
+> kubectl get svc bitbucket-svc -o json | jq .spec.ports[0].nodePort  
+> 30001  
 
 If you are Running on cloud, you want to know a cluster node IP.
-Run: `kubectl get nodes -o json | jq .items[0].status.addresses[1]`
+Run: `kubectl get nodes -o json | jq .items[0].status.addresses[1]`  
 > kubectl get nodes -o json | jq .items[0].status.addresses[1]  
-> {
->   "address": "35.223.134.3",
->   "type": "ExternalIP"
->}
+> {  
+>   "address": "35.223.134.3",  
+>   "type": "ExternalIP"  
+>}  
 
 Make sure it's type is ExternalIP.  
 Also and very important, the cloud is by default have no ports open in it's firewall, so we have to open our services port.  
@@ -60,8 +60,8 @@ Run: `kubectl port-forward svc/argocd-server -n argocd 8080:443`
 If you running on cloud patch the svc to become a LoadBalancer:  
 Run: `kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'`  
 and look for the externalIP with the command: `kubectl get svc -n argocd`  
-> kubectl get svc -n argocd
-> ...
+> kubectl get svc -n argocd  
+> ...  
 > argocd-server           LoadBalancer   <InternalIP>    <ExternalIP>   80:31253/TCP,443:30053/TCP   5m55s  
 
 You can now go to: "http://localhost/" or "http://<LoadBalancerIP>/" and see the ArgoCD UI.
@@ -70,8 +70,8 @@ You can now go to: "http://localhost/" or "http://<LoadBalancerIP>/" and see the
 
 To get the password of the admin user, run: 
 `kubectl get pods -n argocd -l app.kubernetes.io/name=argocd-server -o name | cut -d'/' -f 2`  
-> kubectl get pods -n argocd -l app.kubernetes.io/name=argocd-server -o name | cut -d'/' -f 2
-> argocd-server-bdcdd6f7c-l8hw4
+> kubectl get pods -n argocd -l app.kubernetes.io/name=argocd-server -o name | cut -d'/' -f 2  
+> argocd-server-bdcdd6f7c-l8hw4  
 
 Go to the UI and enter username and password.
 
@@ -86,8 +86,8 @@ In Bitbucket, Create a project with your name and a repository called "package-u
 ![Creating a Repository](pictures/create-bitbucket-repo.png)
 
 Clone the repository to your environment (Not inside labs directory!)
-> git clone http://<bitbucket>/scm/it/package-uploader-ui.git
-> warning: You appear to have cloned an empty repository.
+> git clone http://<bitbucket>/scm/it/package-uploader-ui.git  
+> warning: You appear to have cloned an empty repository.  
 
 Go to the first clone we made from github and delete the '.git' hidden directory:  
 `rm -rf nexus-uploader-dashboard-example/.git`  
@@ -99,10 +99,10 @@ And then push the code into bitbucket (Do it yourself). Bitbucket may ask you to
 
 We can see that the repository has a deploy folder. Look inside and see how the application deploys itself to k8s.  
 Look at the spec of the deployment yaml, you'll see there the image of our application.  
-> spec:
->   containers: 
->     - image: DOCKERHUBUSER/pkgup-ui:1
->       name: pkgup-ui
+> spec:  
+>   containers:  
+>     - image: DOCKERHUBUSER/pkgup-ui:1  
+>       name: pkgup-ui  
 
 What about to app's docker image ? well... we'll have to build it:  
 `docker build . -t DOCKERHUBUSER/pkgup-ui:1`  
