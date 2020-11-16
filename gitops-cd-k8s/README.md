@@ -25,7 +25,7 @@ This will show you your port for outside-cluster communication!
 > kubectl get svc bitbucket-svc -o json | jq .spec.ports[0].nodePort  
 > 30001  
 
-If you are Running on cloud, you want to know a cluster node IP.
+If you are Running on cloud, you want to know a cluster node IP.  
 Run: `kubectl get nodes -o json | jq .items[0].status.addresses[1]`  
 > kubectl get nodes -o json | jq .items[0].status.addresses[1]  
 > {  
