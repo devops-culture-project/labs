@@ -3,48 +3,43 @@ In this lab we will need a local git and argocd (and of course k8s installed)
 we will create a basic deployment of an application and then will connect it to argocd and see the changes we can do.
 
 ## Requirements
-Recommendation: This lab is taking a lot of resources from your computer, so it's prefered to run it on a cloud.
+Recommendation: This lab should be running on cloud.
 This lab assumes that you are running on a linux machine.
 Please install theese softwares on your machine/workstation:
-* Docker
 * Kubernetes
+* Docker
+Note: normally when installing kubernetes docker is inside. But still make sure it is installed.
 
 ## Environment
 This is your working directory for this lab (Labs/gitops-cd-k8s).  
-Don't forget to clone this repository !
+Don't forget to clone this repository!
 
-## Bitbucket
-Run on your machine: `kubectl apply -f deploy/bitbucket/`  
-With that command, you deployed a bitbucket instance to your environment:
-* Bitbucket server (StatefulSet)
-* Bitbucket volume (PV)
-* Bitbucket service (Service of type NodePort)
+<!-- ## Gogs
+Run on your machine: `kubectl apply -f deploy/gogs/`  
+With that command, you deployed a gogs instance to your environment:
+* gogs namespace
+* gogs server (StatefulSet)
+* gogs volume and claim (PVC)
+* gogs service (Service of type LoadBalancer)
 
-Run: `kubectl get svc bitbucket-svc -o json | jq .spec.ports[0].nodePort`  
-This will show you your port for outside-cluster communication!  
-> kubectl get svc bitbucket-svc -o json | jq .spec.ports[0].nodePort  
-> 30001  
+Run: `kubectl get svc gogs-server -n gogs -o json | jq .status.loadBalancer.ingress[0].ip`  
+This will show you your ip for outside-cluster communication!  
+> kubectl get svc gogs-server -n gogs -o json | jq .status.loadBalancer.ingress[0].ip  
+> "35.224.144.255"
 
-If you are Running on cloud, you want to know a cluster node IP.  
-Run: `kubectl get nodes -o json | jq .items[0].status.addresses[1]`  
-> kubectl get nodes -o json | jq .items[0].status.addresses[1]  
-> {  
->   "address": "35.223.134.3",  
->   "type": "ExternalIP"  
->}  
-
-Make sure it's type is ExternalIP.  
-Also and very important, the cloud is by default have no ports open in it's firewall, so we have to open our services port.  
-For GCP run: `gcloud compute firewall-rules create bitbucket-web-port --allow tcp:<YourNodePort>`
-> gcloud compute firewall-rules create bitbucket-web-port --allow tcp:30001
-
-Go on your browser to: http://localhost:<YourNodePort>/setup (or for cloud: http://<ClusterNodeIP:<YourNodePort>/setup)  
+Go on your browser to: http://<YourLoabBalancerIp>:3000
 You can also test your api respose:  
-> curl -X GET "http://localhost:30001/setup"
+> curl -X GET "http://35.224.144.255:3000"
 
-You should see the bitbucket's setup page.  Do the quick setup with the internal DB and no jira integration.  
-It shoukd ask you for a license, you can generate it easily (just choose server license when you'll need to).  
-Log in to bitbucket and that should be enough for it.
+You should see the gogs's setup page. Do the quick setup:
+- SQLite DB
+- under 'domain' put your LB IP
+- under 'application url' replace localhost with your LB IP
+- under 'Optional Settings' tab, click on 'Admin Acount Settings' and create an admin user
+
+![Gogs Configuration](pictures/configure-gogs.png)
+
+Click on 'Install Gogs'. -->
 
 ## ArgoCD
 Go to: https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml  
@@ -70,9 +65,9 @@ You can now go to: "http://localhost/" or "http://<LoadBalancerIP>/" and see the
 ![ArgoCD Login](pictures/argocd-login.png)
 
 To get the password of the admin user, run:  
-`kubectl get pods -n argocd -l app.kubernetes.io/name=argocd-server -o name | cut -d'/' -f 2`  
-> kubectl get pods -n argocd -l app.kubernetes.io/name=argocd-server -o name | cut -d'/' -f 2  
-> argocd-server-bdcdd6f7c-l8hw4  
+`kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d`  
+> kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d  
+> EiGtNMdNPkIKFVVq 
 
 Go to the UI and enter username and password.
 
@@ -83,21 +78,37 @@ We we'll now use our environment to do a CD to our kubernetes cluster with an ap
 Please clone this repository:  
 `git clone https://github.com/devops-culture-project/nexus-uploader-dashboard-example.git`  
 
-In Bitbucket, Create a project with your name and a repository called "package-uploader-ui":
+<!-- In Gogs, Create a repository called "package-uploader-ui":
 
-![Creating a Repository](pictures/create-bitbucket-repo.png)
+![Creating a Repository](pictures/create-gogs-repo.png)
 
 Clone the repository to your environment (Not inside labs directory!)
-> git clone http://<bitbucket>/scm/it/package-uploader-ui.git  
-> warning: You appear to have cloned an empty repository.  
+> git clone http://<gogs>:3000/devops/package-uploader-ui.git  
+> warning: You appear to have cloned an empty repository.   -->
+
+In github, Create a repository called "package-uploader-ui"  
+
+![Creating a Repository](pictures/create-github-repo.png)
+
+Clone the repository to your environment (Not inside labs directory!)
+> git clone http://github.com/USERNAME/package-uploader-ui.git  
+> warning: You appear to have cloned an empty repository.   
+
+<!-- Go to the first clone we made from github and delete the '.git' hidden directory:  
+`rm -rf nexus-uploader-dashboard-example/.git`  
+After deletion is complete, copy the files into our new gogs clone:  
+`cp -r nexus-uploader-dashboard-example/* package-uploader-ui/`  
+And then push the code into gogs (Do it yourself). Gogs may ask you to config user.email and user.name - do it.
+
+![](pictures/gogs-repo-with-code.png) -->
 
 Go to the first clone we made from github and delete the '.git' hidden directory:  
 `rm -rf nexus-uploader-dashboard-example/.git`  
-After deletion is complete, copy the files into our new bitbucket clone:  
+After deletion is complete, copy the files into our new repository clone:  
 `cp -r nexus-uploader-dashboard-example/* package-uploader-ui/`  
-And then push the code into bitbucket (Do it yourself). Bitbucket may ask you to config user.email and user.name - do it.
+And then push the code into github (Do it yourself). Github may ask you to config user.email and user.name - do it.
 
-![](pictures/bitbucket-repo-with-code.png)
+![](pictures/github-repo-with-code.png) -->
 
 We can see that the repository has a deploy folder. Look inside and see how the application deploys itself to k8s.  
 Look at the spec of the deployment yaml, you'll see there the image of our application.  
@@ -106,6 +117,9 @@ Look at the spec of the deployment yaml, you'll see there the image of our appli
 >     - image: DOCKERHUBUSER/pkgup-ui:1  
 >       name: pkgup-ui  
 
+If you don't have a dockerhub account this is the time - create one!  
+If you already did (as I asked), change the image name to your dockerhub user and push it.
+
 What about to app's docker image ? well... we'll have to build it:  
 `docker build . -t DOCKERHUBUSER/pkgup-ui:1`  
 And then push it to your docker hub repo:  
@@ -113,11 +127,11 @@ And then push it to your docker hub repo:
 Check you have that image in your docker hub.
 
 The next thing we'll do is to add our project to ArgoCD. Go the argo and push on the button "+ NEW APP".  
-Give your app the name, under project fill 'default' and leave sync policy in manual mode.
+Give your app the name, under project fill 'default' and change sync policy in automatic mode.
 
 ![](pictures/create-argo-app-part1.png)
 
-Under source, fill the bitbucket repo url, keep HEAD as the revision and unde path put '/'.  
+Under source, fill the repository repo url, keep HEAD as the revision and under path put 'deploy/'.  
 Under Cluster URL fill: https://kubernetes.default.svc  
 Under Namespace choose the default.  
 
@@ -125,15 +139,66 @@ Under Namespace choose the default.
 
 Click "+CREATE"  
 
-<< TODO: Create is not working >>
+After a few second, you should see this in your screen:
 
+![](pictures/argo-app-created.png)
+
+Click on your app, you should see your entie deployment in a healthy state.
+
+Run in your console:  
+`k get svc`  
+You should see the external ip of your new app. Go to http://<external-ip> and see the app!
+Run `k get deploy artifact-uploader-ui -o json | jq .spec.template.spec.containers[0].image`  
+You should get the image name used by the current deployment.
+
+### Argo - Github webhook
+We want argo to know when there is a change, for that we'll have to configure webhook from github to argo.  
+In your github package uploader repository go to settings -> webhooks -> click on 'add webhook'
+Under 'payload url': https://<argo-ip>/api/webhook  
+Content Type should be: 'application/json'  
+Disable the SSL verification (yes, I know it's bad)  
+It should look like this:
+
+![Argo Webhook Configuration](pictures/argo-webhook-github.png)
+
+Now, let's check this webhook. Let's tag our app image with a new tag and push it to the registry.  
+Run: `docker tag DOCKERHUBUSER/pkgup-ui:1 DOCKERHUBUSER/pkgup-ui:2`  
+And then: `docker push maromitamar/pkgup-ui:2`  
+Now, edit the application's deployment by switching the image tag to the new one.  
+It should look like this:  
+> spec:  
+>   containers:  
+>     - image: DOCKERHUBUSER/pkgup-ui:2  
+>       name: pkgup-ui  
+
+Commit your change and push it to github. After that, go faster to the app window in argo and see whats happening:  
+
+![](pictures/argo-out-of-sync.png) ![](pictures/argo-change.png)
+
+Argo noticed that what is written in the git repo and what si running in our k8s cluster is different, and because it is a gitops tool,
+our git is our only source of thruth, so he changed what's in the cluster to fit whats in the git.
+
+Let's do another thing.  
+We will delete our application pod from the k8s cluster itself. Argo then should notice the same thing as before - 
+what is written in the git repo and what si running in our k8s cluster is different - so he will check the git and as the git says,
+he will create our deployment again.  
+Run: `kubectl delete deployment artifact-uploader-ui`  
+
+Wait what ? Argo went out-of-sync but it isn't creating my deployment back!  
+That's because it isn't in his sync policy!  
+Go to 'App details' -> 'sync policy' -> press 'enable' next to self heal  
+And.. there you go! argo is creating our deployment.  
+You can try and delete the deployment again, but now Argo will create it automatically.
+
+Hope you enjoyed and even learned something, Gitops is a great concept and you should think about implementing it in every thing you do.  
+We still left to clean our mess...
 ### Clean your lab
-1. From the working directory, stop the compose:  
-    `docker-compose down -v`
-1. In case you don't want to save your jenkins data, remove /tmp/jenkins_home from your machine:  
-    `rm -rf /tmp/jenkins_home`  
-1. Clear ddclient config:
-    `rm -rf /tmp/ddclient-config`
+1. From the lab's working directory, delete all deployments:  
+    `kubectl delete -f deploy/argocd/`
+1. From the app's working directory, delete all deployments:  
+    `kubectl delete -f deploy/`  
+1. Remove all folders of lab and app
+* Important: It's funny but don't delete your app and then Argo, because argo of course will make sure to create it again.
 
 ## Biblography
 This Lab is based on these tutorials:  

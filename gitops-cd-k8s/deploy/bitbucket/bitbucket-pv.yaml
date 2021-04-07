@@ -1,10 +1,12 @@
 kind: PersistentVolume
 apiVersion: v1
 metadata:
-  name: bitbucket-data
   labels:
+    app: bitbucket
+    app.kubernetes.io/component: bitbucket-server
     app.kubernetes.io/part-of: bitbucket
     app.kubernetes.io/managed-by: argocd
+  name: bitbucket-data
 spec:
   storageClassName: manual
   capacity:

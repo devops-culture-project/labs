@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: gogs
+    app.kubernetes.io/component: gogs-server
+    app.kubernetes.io/managed-by: argocd
+  name: gogs-server
+  namespace: gogs
+spec:
+  serviceName: gogs-server
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gogs-server
+  template:
+    metadata:
+      labels:
+        app: gogs-server
+    spec:
+      containers:
+      - name: gogs
+        image: gogs/gogs:0.11.91
+        ports:
+        - containerPort: 22
+          name: ssh
+        - containerPort: 3000
+          name: http
+        env:
+        - name: SOCAT_LINK
+          value: "false"
+        - name: SKIP_TLS_VERIFY
+          value: "true"
+        volumeMounts:
+        - name: gogs-persistent-storage
+          mountPath: /data
+      volumes:
+      - name: gogs-persistent-storage
+        persistentVolumeClaim:
+          claimName: gogs-pv-claim
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app: gogs
+    app.kubernetes.io/component: gogs-server
+    app.kubernetes.io/managed-by: argocd
+  name: gogs-pv-claim
+  namespace: gogs
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
