@@ -58,9 +58,9 @@ Run: `kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalan
 and look for the externalIP with the command: `kubectl get svc -n argocd`  
 > kubectl get svc -n argocd  
 > ...  
-> argocd-server           LoadBalancer   <InternalIP>    <ExternalIP>   80:31253/TCP,443:30053/TCP 
+> argocd-server           LoadBalancer   InternalIP    ExternalIP   80:31253/TCP,443:30053/TCP 
 
-You can now go to: "http://localhost/" or "http://<LoadBalancerIP>/" and see the ArgoCD UI.
+You can now go to: "http://localhost/" or "http://LoadBalancerIP/" and see the ArgoCD UI.
 
 ![ArgoCD Login](pictures/argocd-login.png)
 
@@ -147,14 +147,14 @@ Click on your app, you should see your entie deployment in a healthy state.
 
 Run in your console:  
 `k get svc`  
-You should see the external ip of your new app. Go to http://<external-ip> and see the app!
+You should see the external ip of your new app. Go to http://external-ip and see the app!
 Run `k get deploy artifact-uploader-ui -o json | jq .spec.template.spec.containers[0].image`  
 You should get the image name used by the current deployment.
 
 ### Argo - Github webhook
 We want argo to know when there is a change, for that we'll have to configure webhook from github to argo.  
 In your github package uploader repository go to settings -> webhooks -> click on 'add webhook'
-Under 'payload url': https://<argo-ip>/api/webhook  
+Under 'payload url': https://argo-ip/api/webhook  
 Content Type should be: 'application/json'  
 Disable the SSL verification (yes, I know it's bad)  
 It should look like this:
