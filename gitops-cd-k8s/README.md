@@ -195,9 +195,11 @@ We still left to clean our mess...
 ### Clean your lab
 1. From the lab's working directory, delete all deployments:  
     `kubectl delete -f deploy/argocd/`
+    `kubectl delete ns argocd`
 1. From the app's working directory, delete all deployments:  
     `kubectl delete -f deploy/`  
 1. Remove all folders of lab and app
+1. Remove your github repo if you don't want it
 * Important: It's funny but don't delete your app and then Argo, because argo of course will make sure to create it again.
 
 ## Biblography
